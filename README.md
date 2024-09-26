@@ -6,10 +6,6 @@ This project implements Strassen's algorithm for matrix multiplication using HTM
 
 You can try the deployed version of the application [here](https://strassensmatrixmultiplication.netlify.app/).
 
-## Repository
-
-Visit the GitHub repository for the source code: [Strassen's Matrix Multiplication Repository](https://github.com/tanujgupta18/Strassen-s-Matrix-Multiplication--PBL)
-
 ## Features
 
 - Input two 3x3 matrices
