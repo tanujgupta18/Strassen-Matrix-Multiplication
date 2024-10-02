@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const size = 3; // Matrix size (3x3)
+  const size = 4; // Matrix size (4x4)
   createMatrixInputs("matrixA", size);
   createMatrixInputs("matrixB", size);
 
@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const matrixA = getMatrixValues("matrixA", size);
       const matrixB = getMatrixValues("matrixB", size);
 
+      // Validate matrices: must be square and of the same size
       if (
         matrixA.length !== matrixB.length ||
         matrixA[0].length !== matrixB[0].length
@@ -19,15 +20,11 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      // Pad matrices to 4x4
-      const paddedA = padMatrix(matrixA, 4);
-      const paddedB = padMatrix(matrixB, 4);
+      // No need to pad for 4x4 since we are already working with 4x4
+      const result = strassenMultiply(matrixA, matrixB);
 
-      const result = strassenMultiply(paddedA, paddedB);
-
-      // Extract the top-left 3x3 matrix from the result
-      const trimmedResult = trimMatrix(result, 3);
-      displayResultMatrix(trimmedResult, "resultMatrix");
+      // Display result matrix
+      displayResultMatrix(result, "resultMatrix");
     });
 });
 
@@ -81,36 +78,6 @@ function displayResultMatrix(matrix, containerId) {
       container.appendChild(cell);
     }
   }
-}
-
-// Pads a matrix to a larger size by filling with zeros
-function padMatrix(matrix, newSize) {
-  const paddedMatrix = new Array(newSize)
-    .fill(0)
-    .map(() => new Array(newSize).fill(0));
-
-  for (let i = 0; i < matrix.length; i++) {
-    for (let j = 0; j < matrix[0].length; j++) {
-      paddedMatrix[i][j] = matrix[i][j];
-    }
-  }
-
-  return paddedMatrix;
-}
-
-// Trims a padded matrix back to its original size
-function trimMatrix(matrix, originalSize) {
-  const trimmedMatrix = new Array(originalSize)
-    .fill(0)
-    .map(() => new Array(originalSize).fill(0));
-
-  for (let i = 0; i < originalSize; i++) {
-    for (let j = 0; j < originalSize; j++) {
-      trimmedMatrix[i][j] = matrix[i][j];
-    }
-  }
-
-  return trimmedMatrix;
 }
 
 // Adds two matrices
