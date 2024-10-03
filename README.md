@@ -8,7 +8,7 @@ You can try the deployed version of the application [here](https://strassensmatr
 
 ## Features
 
-- Input two 3x3 matrices
+- Input two 4x4 matrices
 - Matrix multiplication using Strassen's algorithm
 - Responsive design with a clean user interface
 - Displays the result in a clear format
