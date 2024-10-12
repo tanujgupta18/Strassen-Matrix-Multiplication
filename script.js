@@ -1,161 +1,249 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const size = 4; // Matrix size (4x4)
-  createMatrixInputs("matrixA", size);
-  createMatrixInputs("matrixB", size);
-
-  document
-    .getElementById("multiplyButton")
-    .addEventListener("click", function () {
-      const matrixA = getMatrixValues("matrixA", size);
-      const matrixB = getMatrixValues("matrixB", size);
-
-      // Validate matrices: must be square and of the same size
-      if (
-        matrixA.length !== matrixB.length ||
-        matrixA[0].length !== matrixB[0].length
-      ) {
-        alert(
-          "Matrices must be of the same size and square for Strassen's algorithm."
-        );
-        return;
-      }
-
-      // No need to pad for 4x4 since we are already working with 4x4
-      const result = strassenMultiply(matrixA, matrixB);
-
-      // Display result matrix
-      displayResultMatrix(result, "resultMatrix");
-    });
-});
-
-// Creates input fields for a matrix
-function createMatrixInputs(containerId, size) {
-  const container = document.getElementById(containerId);
-  container.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
-  container.innerHTML = "";
-
-  // Create input fields in a grid
-  for (let i = 0; i < size; i++) {
-    for (let j = 0; j < size; j++) {
-      const input = document.createElement("input");
-      input.type = "number";
-      input.value = 0; // Default value
-      container.appendChild(input);
-    }
-  }
+function showTheory() {
+    alert(
+        " Steps For Strassens Matrix Multiplication:\n" +
+        "P1: A11(B12 - B22)\n" +
+        "P2: (A11 + A12) B22\n" +
+        "P3: (A21 + A22) B11\n" +
+        "P4: A22(B21 - B11)\n" +
+        "P5: (A11 + A22)(B11 + B22)\n" +
+        "P6: (A12 - A22)(B21 + B22)\n" +
+        "P7: (A11 - A21)(B11 + B12)\n" +
+        "Combining Products\n" +
+        "C11: P5 + P4 - P2 + P6\n" +
+        "C12: P1 + P2\n" +
+        "C21: P3 + P4\n" +
+        "C22: P5 + P1 - P3 - P7"
+    );
 }
 
-// Retrieves matrix values from input fields
-function getMatrixValues(containerId, size) {
-  const container = document.getElementById(containerId);
-  const inputs = container.getElementsByTagName("input");
-  const matrix = [];
+function splitMatrices() {
+    // Retrieve the values from the inputs for Matrix A
+    const A = [
+        [
+            parseInt(document.getElementById("a00").value),
+            parseInt(document.getElementById("a01").value),
+            parseInt(document.getElementById("a02").value),
+            parseInt(document.getElementById("a03").value)
+        ],
+        [
+            parseInt(document.getElementById("a10").value),
+            parseInt(document.getElementById("a11").value),
+            parseInt(document.getElementById("a12").value),
+            parseInt(document.getElementById("a13").value)
+        ],
+        [
+            parseInt(document.getElementById("a20").value),
+            parseInt(document.getElementById("a21").value),
+            parseInt(document.getElementById("a22").value),
+            parseInt(document.getElementById("a23").value)
+        ],
+        [
+            parseInt(document.getElementById("a30").value),
+            parseInt(document.getElementById("a31").value),
+            parseInt(document.getElementById("a32").value),
+            parseInt(document.getElementById("a33").value)
+        ]
+    ];
 
-  // Extract values from input fields
-  for (let i = 0; i < size; i++) {
-    const row = [];
-    for (let j = 0; j < size; j++) {
-      row.push(parseFloat(inputs[i * size + j].value));
-    }
-    matrix.push(row);
-  }
+    // Retrieve the values from the inputs for Matrix B
+    const B = [
+        [
+            parseInt(document.getElementById("b00").value),
+            parseInt(document.getElementById("b01").value),
+            parseInt(document.getElementById("b02").value),
+            parseInt(document.getElementById("b03").value)
+        ],
+        [
+            parseInt(document.getElementById("b10").value),
+            parseInt(document.getElementById("b11").value),
+            parseInt(document.getElementById("b12").value),
+            parseInt(document.getElementById("b13").value)
+        ],
+        [
+            parseInt(document.getElementById("b20").value),
+            parseInt(document.getElementById("b21").value),
+            parseInt(document.getElementById("b22").value),
+            parseInt(document.getElementById("b23").value)
+        ],
+        [
+            parseInt(document.getElementById("b30").value),
+            parseInt(document.getElementById("b31").value),
+            parseInt(document.getElementById("b32").value),
+            parseInt(document.getElementById("b33").value)
+        ]
+    ];
 
-  return matrix;
+    const A11 = [[A[0][0], A[0][1]], [A[1][0], A[1][1]]];
+    const A12 = [[A[0][2], A[0][3]], [A[1][2], A[1][3]]];
+    const A21 = [[A[2][0], A[2][1]], [A[3][0], A[3][1]]];
+    const A22 = [[A[2][2], A[2][3]], [A[3][2], A[3][3]]];
+
+    const B11 = [[B[0][0], B[0][1]], [B[1][0], B[1][1]]];
+    const B12 = [[B[0][2], B[0][3]], [B[1][2], B[1][3]]];
+    const B21 = [[B[2][0], B[2][1]], [B[3][0], B[3][1]]];
+    const B22 = [[B[2][2], B[2][3]], [B[3][2], B[3][3]]];
+
+    const resultDiv = document.getElementById("result");
+    resultDiv.innerHTML = `
+        <div>
+            <strong>A11</strong>
+            ${generateTable(A11)}
+        </div>
+        <div>
+            <strong>A12</strong>
+            ${generateTable(A12)}
+        </div>
+        <div>
+            <strong>A21</strong>
+            ${generateTable(A21)}
+        </div>
+        <div>
+            <strong>A22</strong>
+            ${generateTable(A22)}
+        </div>
+        <div>
+            <strong>B11</strong>
+            ${generateTable(B11)}
+        </div>
+        <div>
+            <strong>B12</strong>
+            ${generateTable(B12)}
+        </div>
+        <div>
+            <strong>B21</strong>
+            ${generateTable(B21)}
+        </div>
+        <div>
+            <strong>B22</strong>
+            ${generateTable(B22)}
+        </div>
+    `;
 }
 
-// Displays the result matrix
-function displayResultMatrix(matrix, containerId) {
-  const size = matrix.length;
-  const container = document.getElementById(containerId);
-  container.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
-  container.innerHTML = "";
-
-  // Display matrix values in a grid
-  for (let i = 0; i < size; i++) {
-    for (let j = 0; j < size; j++) {
-      const cell = document.createElement("div");
-      cell.textContent = matrix[i][j];
-      container.appendChild(cell);
+function generateTable(matrix) {
+    let tableHTML = '<table><tbody>';
+    for (let i = 0; i < matrix.length; i++) {
+        tableHTML += '<tr>';
+        for (let j = 0; j < matrix[i].length; j++) {
+            tableHTML += `<td>${matrix[i][j]}</td>`;
+        }
+        tableHTML += '</tr>';
     }
-  }
+    tableHTML += '</tbody></table>';
+    return tableHTML;
 }
 
-// Adds two matrices
-function addMatrices(A, B) {
-  const n = A.length;
-  const C = new Array(n).fill(0).map(() => new Array(n).fill(0));
-  for (let i = 0; i < n; i++) {
-    for (let j = 0; j < n; j++) {
-      C[i][j] = A[i][j] + B[i][j];
+// Add the Strassen Matrix Multiplication function
+function strassenMultiplication() {
+    // Helper function for matrix addition
+    function addMatrices(A, B) {
+        return A.map((row, i) => row.map((val, j) => val + B[i][j]));
     }
-  }
-  return C;
-}
 
-// Subtracts matrix B from matrix A
-function subtractMatrices(A, B) {
-  const n = A.length;
-  const C = new Array(n).fill(0).map(() => new Array(n).fill(0));
-  for (let i = 0; i < n; i++) {
-    for (let j = 0; j < n; j++) {
-      C[i][j] = A[i][j] - B[i][j];
+    // Helper function for matrix subtraction
+    function subtractMatrices(A, B) {
+        return A.map((row, i) => row.map((val, j) => val - B[i][j]));
     }
-  }
-  return C;
-}
 
-// Strassen's matrix multiplication algorithm
-function strassenMultiply(A, B) {
-  const n = A.length;
+    // Strassen's Matrix Multiplication Recursive Algorithm
+    function strassen(A, B) {
+        if (A.length === 1) {
+            return [[A[0][0] * B[0][0]]];
+        }
 
-  // Base case for recursion
-  if (n === 1) {
-    return [[A[0][0] * B[0][0]]];
-  }
+        const mid = A.length / 2;
 
-  const k = Math.floor(n / 2);
+        const A11 = A.slice(0, mid).map(row => row.slice(0, mid));
+        const A12 = A.slice(0, mid).map(row => row.slice(mid));
+        const A21 = A.slice(mid).map(row => row.slice(0, mid));
+        const A22 = A.slice(mid).map(row => row.slice(mid));
 
-  // Divide matrices into quarters
-  const A11 = A.slice(0, k).map((row) => row.slice(0, k));
-  const A12 = A.slice(0, k).map((row) => row.slice(k));
-  const A21 = A.slice(k).map((row) => row.slice(0, k));
-  const A22 = A.slice(k).map((row) => row.slice(k));
+        const B11 = B.slice(0, mid).map(row => row.slice(0, mid));
+        const B12 = B.slice(0, mid).map(row => row.slice(mid));
+        const B21 = B.slice(mid).map(row => row.slice(0, mid));
+        const B22 = B.slice(mid).map(row => row.slice(mid));
 
-  const B11 = B.slice(0, k).map((row) => row.slice(0, k));
-  const B12 = B.slice(0, k).map((row) => row.slice(k));
-  const B21 = B.slice(k).map((row) => row.slice(0, k));
-  const B22 = B.slice(k).map((row) => row.slice(k));
+        const M1 = strassen(addMatrices(A11, A22), addMatrices(B11, B22));
+        const M2 = strassen(addMatrices(A21, A22), B11);
+        const M3 = strassen(A11, subtractMatrices(B12, B22));
+        const M4 = strassen(A22, subtractMatrices(B21, B11));
+        const M5 = strassen(addMatrices(A11, A12), B22);
+        const M6 = strassen(subtractMatrices(A21, A11), addMatrices(B11, B12));
+        const M7 = strassen(subtractMatrices(A12, A22), addMatrices(B21, B22));
 
-  // Strassen's submatrices
-  const M1 = strassenMultiply(addMatrices(A11, A22), addMatrices(B11, B22));
-  const M2 = strassenMultiply(addMatrices(A21, A22), B11);
-  const M3 = strassenMultiply(A11, subtractMatrices(B12, B22));
-  const M4 = strassenMultiply(A22, subtractMatrices(B21, B11));
-  const M5 = strassenMultiply(addMatrices(A11, A12), B22);
-  const M6 = strassenMultiply(
-    subtractMatrices(A21, A11),
-    addMatrices(B11, B12)
-  );
-  const M7 = strassenMultiply(
-    subtractMatrices(A12, A22),
-    addMatrices(B21, B22)
-  );
+        const C11 = addMatrices(subtractMatrices(addMatrices(M1, M4), M5), M7);
+        const C12 = addMatrices(M3, M5);
+        const C21 = addMatrices(M2, M4);
+        const C22 = addMatrices(subtractMatrices(addMatrices(M1, M3), M2), M6);
 
-  // Combine submatrices to get the result
-  const C11 = addMatrices(subtractMatrices(addMatrices(M1, M4), M5), M7);
-  const C12 = addMatrices(M3, M5);
-  const C21 = addMatrices(M2, M4);
-  const C22 = addMatrices(subtractMatrices(addMatrices(M1, M3), M2), M6);
+        const C = [];
 
-  const C = new Array(n).fill(0).map(() => new Array(n).fill(0));
-  for (let i = 0; i < k; i++) {
-    for (let j = 0; j < k; j++) {
-      C[i][j] = C11[i][j];
-      C[i][j + k] = C12[i][j];
-      C[i + k][j] = C21[i][j];
-      C[i + k][j + k] = C22[i][j];
+        for (let i = 0; i < mid; i++) {
+            C.push([...C11[i], ...C12[i]]);
+        }
+        for (let i = 0; i < mid; i++) {
+            C.push([...C21[i], ...C22[i]]);
+        }
+
+        return C;
     }
-  }
 
-  return C;
+    const A = [
+        [
+            parseInt(document.getElementById("a00").value),
+            parseInt(document.getElementById("a01").value),
+            parseInt(document.getElementById("a02").value),
+            parseInt(document.getElementById("a03").value)
+        ],
+        [
+            parseInt(document.getElementById("a10").value),
+            parseInt(document.getElementById("a11").value),
+            parseInt(document.getElementById("a12").value),
+            parseInt(document.getElementById("a13").value)
+        ],
+        [
+            parseInt(document.getElementById("a20").value),
+            parseInt(document.getElementById("a21").value),
+            parseInt(document.getElementById("a22").value),
+            parseInt(document.getElementById("a23").value)
+        ],
+        [
+            parseInt(document.getElementById("a30").value),
+            parseInt(document.getElementById("a31").value),
+            parseInt(document.getElementById("a32").value),
+            parseInt(document.getElementById("a33").value)
+        ]
+    ];
+
+    const B = [
+        [
+            parseInt(document.getElementById("b00").value),
+            parseInt(document.getElementById("b01").value),
+            parseInt(document.getElementById("b02").value),
+            parseInt(document.getElementById("b03").value)
+        ],
+        [
+            parseInt(document.getElementById("b10").value),
+            parseInt(document.getElementById("b11").value),
+            parseInt(document.getElementById("b12").value),
+            parseInt(document.getElementById("b13").value)
+        ],
+        [
+            parseInt(document.getElementById("b20").value),
+            parseInt(document.getElementById("b21").value),
+            parseInt(document.getElementById("b22").value),
+            parseInt(document.getElementById("b23").value)
+        ],
+        [
+            parseInt(document.getElementById("b30").value),
+            parseInt(document.getElementById("b31").value),
+            parseInt(document.getElementById("b32").value),
+            parseInt(document.getElementById("b33").value)
+        ]
+    ];
+
+    const result = strassen(A, B);
+
+    const resultDiv = document.getElementById("result");
+    resultDiv.innerHTML = `<div><strong>Result</strong>${generateTable(result)}</div>`;
 }
