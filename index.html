@@ -6,25 +6,85 @@
     <title>Strassen's Matrix Multiplication</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
+  
   <body>
-    <div class="container">
-      <h1>Strassen's Matrix Multiplication</h1>
-      <div class="matrix-inputs">
-        <div class="matrix">
-          <h2>Matrix A</h2>
-          <div id="matrixA" class="matrix-grid"></div>
-        </div>
-        <div class="matrix">
-          <h2>Matrix B</h2>
-          <div id="matrixB" class="matrix-grid"></div>
-        </div>
+    <h1>STRASSEN'S MATRIX MULTIPLICATION</h1>
+    <div class="matrix-container">
+      <div class="matrix-box">
+        <h2>Matrix A</h2>
+        <table id="matrix-a-table">
+          <tbody>
+            <tr>
+              <td><input type="number" id="a00" value="1" /></td>
+              <td><input type="number" id="a01" value="2" /></td>
+              <td><input type="number" id="a02" value="3" /></td>
+              <td><input type="number" id="a03" value="4" /></td>
+            </tr>
+            <tr>
+              <td><input type="number" id="a10" value="5" /></td>
+              <td><input type="number" id="a11" value="6" /></td>
+              <td><input type="number" id="a12" value="7" /></td>
+              <td><input type="number" id="a13" value="8" /></td>
+            </tr>
+            <tr>
+              <td><input type="number" id="a20" value="9" /></td>
+              <td><input type="number" id="a21" value="10" /></td>
+              <td><input type="number" id="a22" value="11" /></td>
+              <td><input type="number" id="a23" value="12" /></td>
+            </tr>
+            <tr>
+              <td><input type="number" id="a30" value="13" /></td>
+              <td><input type="number" id="a31" value="14" /></td>
+              <td><input type="number" id="a32" value="15" /></td>
+              <td><input type="number" id="a33" value="16" /></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <button id="multiplyButton">Multiply</button>
-      <div class="matrix result">
-        <h2>Result Matrix</h2>
-        <div id="resultMatrix" class="matrix-grid"></div>
+
+      <div class="matrix-box">  
+        <h2>Matrix B</h2>
+        <table id="matrix-b-table">
+          <tbody>
+            <tr>
+              <td><input type="number" id="b00" value="16" /></td>
+              <td><input type="number" id="b01" value="15" /></td>
+              <td><input type="number" id="b02" value="14" /></td>
+              <td><input type="number" id="b03" value="13" /></td>
+            </tr>
+            <tr>
+              <td><input type="number" id="b10" value="12" /></td>
+              <td><input type="number" id="b11" value="11" /></td>
+              <td><input type="number" id="b12" value="10" /></td>
+              <td><input type="number" id="b13" value="9" /></td>
+            </tr>
+            <tr>
+              <td><input type="number" id="b20" value="8" /></td>
+              <td><input type="number" id="b21" value="7" /></td>
+              <td><input type="number" id="b22" value="6" /></td>
+              <td><input type="number" id="b23" value="5" /></td>
+            </tr>
+            <tr>
+              <td><input type="number" id="b30" value="4" /></td>
+              <td><input type="number" id="b31" value="3" /></td>
+              <td><input type="number" id="b32" value="2" /></td>
+              <td><input type="number" id="b33" value="1" /></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
+        
+    <button onclick="showTheory()">Info on Strassen's Matrix Multiplication</button>
+    <button onclick="splitMatrices()">Split Matrices</button>
+    <button onclick="strassenMultiplication()">Multiply Matrices</button>
+
+    <h2>Resulting 2x2 Matrices</h2>
+    <div id="result"></div>
+    <div class="link">
+      <a href="https://youtu.be/0oJyNmEbS4w?si=n8M_kEYuy2dOP7A2" style="color: #dbe1e7; text-decoration: underline;">Click here for full video explanation</a>
+    </div>
+    
     <script src="script.js"></script>
   </body>
 </html>
