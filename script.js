@@ -1,20 +1,24 @@
 function showTheory() {
     alert(
-        " Steps For Strassens Matrix Multiplication:\n" +
+        "Steps for Strassen's Matrix Multiplication:\n" +
         "P1: A11(B12 - B22)\n" +
-        "P2: (A11 + A12) B22\n" +
-        "P3: (A21 + A22) B11\n" +
+        "P2: (A11 + A12)B22\n" +
+        "P3: (A21 + A22)B11\n" +
         "P4: A22(B21 - B11)\n" +
         "P5: (A11 + A22)(B11 + B22)\n" +
         "P6: (A12 - A22)(B21 + B22)\n" +
-        "P7: (A11 - A21)(B11 + B12)\n" +
-        "Combining Products\n" +
+        "P7: (A11 - A21)(B11 + B12)\n\n" +
+        "Combining Products:\n" +
         "C11: P5 + P4 - P2 + P6\n" +
         "C12: P1 + P2\n" +
         "C21: P3 + P4\n" +
-        "C22: P5 + P1 - P3 - P7"
+        "C22: P5 + P1 - P3 - P7\n\n" +
+        "Time Complexity:\n" +
+        "The time complexity of normal matrix multiplication is O(N^3)\n" +
+        "The time complexity of Strassen's Multiplication is O(N^log7)"
     );
 }
+
 
 function splitMatrices() {
     // Retrieve the values from the inputs for Matrix A
